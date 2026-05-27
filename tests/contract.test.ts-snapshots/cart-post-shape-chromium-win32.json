@@ -1,0 +1,11 @@
+{
+  "date": "string",
+  "id": "number",
+  "products": [
+    {
+      "productId": "number",
+      "quantity": "number"
+    }
+  ],
+  "userId": "number"
+}
