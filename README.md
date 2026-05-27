@@ -20,20 +20,21 @@ For schema validation I added **Ajv** (the industry-standard JSON Schema validat
 ---
 
 ## Project Layout
-
+.
 ├── tests/
-│   ├── cart-crud.test.ts  # POST, GET, PUT, DELETE happy paths
+│   ├── cart-crud.test.ts           # POST, GET, PUT, DELETE + negative cases
 │   ├── auth.test.ts                # /auth/login positive + negative
 │   ├── schema-validation.test.ts   # Ajv-based response shape checks
 │   ├── data-driven.test.ts         # POST /carts across 5 product IDs
 │   ├── contract.test.ts            # Snapshot-based contract test
-│   └── contract.test.ts-snapshots/ # Saved response shapes (committed)
+│   └── contract.test.ts-snapshots/ # Saved response shapes (committed to repo)
 ├── schemas/
 │   └── cart.schema.ts              # Cart JSON Schema definitions
 ├── helpers/
-│   └── schema-validator.ts         # Ajv wrapper
+│   └── schema-validator.ts         # Ajv wrapper (validateSchema, assertSchema)
 ├── fixtures/
 │   └── test-data.ts                # Endpoints, credentials, payloads
+├── tests/                          # Local-run screenshots
 ├── playwright.config.ts
 └── .github/workflows/playwright.yml
 
@@ -67,6 +68,38 @@ npx playwright test --update-snapshots tests/contract.test.ts
 
 ---
 
+## ⚠️ A Note on CI — Cloudflare Block
+
+**Tests pass locally. CI runs return HTTP 403 for every API call.**
+
+Screenshots of a successful local run are in [`tests/`](tests/).
+
+### Why CI fails
+
+`fakestoreapi.com` is hosted behind Cloudflare bot protection. Cloudflare automatically blocks requests originating from datacenter IP ranges, which includes all GitHub Actions runners (AWS / Azure / GCP). Every request from CI returns:
+HTTP/2 403 Forbidden
+content-type: text/html
+
+The response body is the standard Cloudflare HTML challenge page, not JSON — which is also why TEST_004 and TEST_005 in cart-crud.test.ts fail with `SyntaxError: Unexpected token '<'`. They tried to parse HTML as JSON.
+
+**This is bot-protection on the third-party API's side. It is not a defect in this test suite.**
+
+For this assignment I chose to **document the limitation** rather than mock the API. The assignment specifically asks for tests against `fakestoreapi.com` — mocking would defeat the purpose. In a real role I'd build a hybrid: mocks for fast PR validation, real-API tests nightly from a non-blocked source.
+
+### Verifying locally
+
+To confirm the suite is functionally correct, clone the repo and run:
+
+```bash
+npm ci
+npm test
+npm run report
+```
+
+All 30 tests pass against the live API from a non-datacenter IP. Local screenshots in [`tests/`](tests/).
+
+---
+
 ## Running Locally
 
 ```bash
@@ -88,11 +121,10 @@ No browser install required — this is an API suite.
 
 The workflow at `.github/workflows/playwright.yml` runs on every push, every PR, and **nightly at 6 AM UTC**.
 
-Why nightly? Because this suite tests an upstream API I don't control. A nightly run catches the day fakestoreapi changes a field, retires an endpoint, or changes status codes — without anyone pushing code to this repo. That's how real teams keep contract tests honest.
-
+Why nightly? Because this suite tests an upstream API I don't control. A nightly run is meant to catch the day fakestoreapi changes a field, retires an endpoint, or changes status codes — without anyone pushing code. In practice, CI hits the Cloudflare block described above and the nightly value is realised only against a non-datacenter source (see the "How real teams solve this" section).
 push / PR / nightly cron  ──►  npm ci  ──►  npx playwright test  ──►  HTML report artifact
 
-- 30 tests, 4 parallel workers, finishes in 1-2 minutes
+- 30 tests, 4 parallel workers, ~1 minute locally
 - HTML report uploaded as artifact (14-day retention)
 - No secrets needed — fakestoreapi is public
 
@@ -105,6 +137,7 @@ push / PR / nightly cron  ──►  npm ci  ──►  npx playwright test  ─
 | What | How |
 |---|---|
 | Per-environment config | `.env`-driven base URL so the same suite runs against dev/staging/prod with one flag |
+| MSW mock layer for CI | Local recordings of real API responses replayed in CI, eliminating the Cloudflare block |
 | Authenticated CRUD | Chain `/auth/login` → use the returned token for cart endpoints once the API enforces auth |
 | Performance baseline | Wrap each request with timing, fail tests where p95 latency exceeds an SLO |
 | Pact contract tests | For a real consumer/provider setup, swap snapshot for [Pact](https://docs.pact.io/) — production-grade contract testing |
@@ -134,7 +167,7 @@ The assignment asked us to lean on AI. I used Claude to:
 - Sketch the schema definitions and the Ajv helper from a single description of fakestoreapi's response shapes
 - Think through what a "fake" API's negative tests should defensively assert
 - Draft the snapshot-based contract approach instead of pulling in a heavier library like Pact for a small assignment
-- Outline the GitHub Actions workflow including the nightly cron rationale
+- Diagnose the Cloudflare 403 issue when CI failed against a passing local run
 
 The whole suite came together in about 60 minutes that way. By hand, it'd have been most of an afternoon.
 

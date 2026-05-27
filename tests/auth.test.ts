@@ -5,7 +5,7 @@ test.describe('Authentication', () => {
 
   // ---------- Positive ----------
 
-  test('AUTH_001: login with valid credentials returns 200 + token', async ({ request }) => {
+  test('TEST_001: login with valid credentials returns 200 + token', async ({ request }) => {
     const response = await request.post(ENDPOINTS.login, {
       data: VALID_CREDENTIALS,
     });
@@ -20,21 +20,21 @@ test.describe('Authentication', () => {
 
   // ---------- Negative ----------
 
-  test('AUTH_002: login with invalid credentials returns error status', async ({ request }) => {
+  test('TEST_002: login with invalid credentials returns error status', async ({ request }) => {
     const response = await request.post(ENDPOINTS.login, {
       data: INVALID_CREDENTIALS,
     });
     expect(response.status()).toBe(401);
   });
 
-  test('AUTH_003: login with missing username returns error', async ({ request }) => {
+  test('TEST_003: login with missing username returns error', async ({ request }) => {
     const response = await request.post(ENDPOINTS.login, {
       data: { password: VALID_CREDENTIALS.password },
     });
     expect(response.status()).toBe(400);
   });
 
-  test('AUTH_004: login with missing password returns error', async ({ request }) => {
+  test('TEST_004: login with missing password returns error', async ({ request }) => {
     const response = await request.post(ENDPOINTS.login, {
       data: { username: VALID_CREDENTIALS.username },
     });
@@ -42,7 +42,7 @@ test.describe('Authentication', () => {
     expect(response.status()).toBe(400);
   });
 
-  test('AUTH_005: login with empty body returns error', async ({ request }) => {
+  test('TEST_005: login with empty body returns error', async ({ request }) => {
     const response = await request.post(ENDPOINTS.login, {
       data: {},
     });

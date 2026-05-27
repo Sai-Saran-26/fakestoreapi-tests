@@ -3,8 +3,7 @@ import { ENDPOINTS, NON_EXISTENT_IDS, SAMPLE_CART_PAYLOAD, UPDATED_CART_PAYLOAD 
 
 test.describe('Cart CRUD Operations @positive', () => {
 
-    //-------- GET --------
-    test(' CART_001 - GET all Carts', async({ request }) => {
+    test(' TEST_001 - GET all Carts', async({ request }) => {
         const response = await request.get(ENDPOINTS.carts);
 
         expect(response.status()).toBe(200);
@@ -14,8 +13,7 @@ test.describe('Cart CRUD Operations @positive', () => {
 
     });
 
-    //-------- GET by ID --------
-    test('CART_002 - GET Cart by ID', async({ request }) => {
+    test('TEST_002 - GET Cart by ID', async({ request }) => {
         const response = await request.get(ENDPOINTS.cartById(1));
         expect(response.status()).toBe(200);
         const body = await response.json();
@@ -26,8 +24,7 @@ test.describe('Cart CRUD Operations @positive', () => {
         expect(Array.isArray(body.products)).toBeTruthy();
     });
 
-    //-------- POST --------
-    test('CART_003- POST Create a new Cart', async({ request }) => {
+    test('TEST_003 - POST Create a new Cart', async({ request }) => {
         const response = await request.post(ENDPOINTS.carts, {
             data: SAMPLE_CART_PAYLOAD,
         });
@@ -40,9 +37,7 @@ test.describe('Cart CRUD Operations @positive', () => {
         expect(body.products).toEqual(SAMPLE_CART_PAYLOAD.products);
     });
 
-    //-------- PUT --------
-
-    test('CART_004 - PUT Update an existing Cart', async({ request }) => {
+    test('TEST_004 - PUT Update an existing Cart', async({ request }) => {
         const createResponse = await request.post(ENDPOINTS.carts, {
             data: SAMPLE_CART_PAYLOAD,
         });
@@ -58,8 +53,7 @@ test.describe('Cart CRUD Operations @positive', () => {
         expect(updatedBody.products).toEqual(UPDATED_CART_PAYLOAD.products);
     });
 
-    //-------- DELETE --------
-    test('CART_005 - DELETE a Cart', async({ request }) => {
+    test('TEST_005 - DELETE a Cart', async({ request }) => {
         const createResponse = await request.post(ENDPOINTS.carts, {
             data: SAMPLE_CART_PAYLOAD,
         });
@@ -73,8 +67,7 @@ test.describe('Cart CRUD Operations @positive', () => {
 
 test.describe('Cart CRUD Operations @negative', () => {
 
-        //-------- GET by non-existent ID --------
-        test('CART_006 - GET Cart by non-existent ID', async({ request }) => {
+        test('TEST_006 - GET Cart by non-existent ID', async({ request }) => {
             const response = await request.get(ENDPOINTS.cartById(999999));
             if(response.status() === 200) {
                 const body = await response.text();
@@ -84,7 +77,7 @@ test.describe('Cart CRUD Operations @negative', () => {
             }
         });
 
-        test('CART_007 - GET /carts/abc (non-numeric id) is handled gracefully', async ({ request }) => {
+        test('TEST_007 - GET /carts/abc (non-numeric id) is handled gracefully', async ({ request }) => {
             const response = await request.get(ENDPOINTS.cartById('abc'));
             if (response.status() === 200) 
             {
@@ -96,7 +89,7 @@ test.describe('Cart CRUD Operations @negative', () => {
             }
         });
 
-        test('CART_008 - POST /carts with empty body', async ({ request }) => {
+        test('TEST_008 - POST /carts with empty body', async ({ request }) => {
             const response = await request.post(ENDPOINTS.carts, {
                 data: {},
             });
@@ -108,7 +101,7 @@ test.describe('Cart CRUD Operations @negative', () => {
             }
         });
 
-        test('CART_009 - POST /carts with invalid product structure', async ({ request }) => {
+        test('TEST_009 - POST /carts with invalid product structure', async ({ request }) => {
             const response = await request.post(ENDPOINTS.carts, {
             data: {
                 userId: 1,
@@ -124,7 +117,7 @@ test.describe('Cart CRUD Operations @negative', () => {
             }
         });
 
-        test('CART_010 - PUT /carts/{nonExistentId} returns 200 or 404', async ({ request }) => {
+        test('TEST_010 - PUT /carts/{nonExistentId} returns 200 or 404', async ({ request }) => {
             const response = await request.put(ENDPOINTS.cartById(NON_EXISTENT_IDS.cart), {
             data: { userId: 1, products: [] },
             });
@@ -137,7 +130,7 @@ test.describe('Cart CRUD Operations @negative', () => {
             }
         });
 
-        test('CART_011 - DELETE /carts/{nonExistentId} returns 200 or 404', async ({ request }) => {
+        test('TEST_011 - DELETE /carts/{nonExistentId} returns 200 or 404', async ({ request }) => {
             const response = await request.delete(ENDPOINTS.cartById(NON_EXISTENT_IDS.cart));
             expect(response.status() === 200 || response.status() === 404).toBe(true)
         });
