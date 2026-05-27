@@ -22,18 +22,18 @@ For schema validation I added **Ajv** (the industry-standard JSON Schema validat
 ## Project Layout
 .
 ├── tests/
-│   ├── cart-crud.test.ts           # POST, GET, PUT, DELETE + negative cases
-│   ├── auth.test.ts                # /auth/login positive + negative
-│   ├── schema-validation.test.ts   # Ajv-based response shape checks
-│   ├── data-driven.test.ts         # POST /carts across 5 product IDs
-│   ├── contract.test.ts            # Snapshot-based contract test
-│   └── contract.test.ts-snapshots/ # Saved response shapes (committed to repo)
+│   ├── cart-crud.test.ts                     # POST, GET, PUT, DELETE + negative cases
+│   ├── auth.test.ts                          # /auth/login positive + negative
+│   ├── schema-validation.test.ts             # Ajv-based response shape checks
+│   ├── data-driven.test.ts                   # POST /carts across 5 product IDs
+│   ├── contract.test.ts                      # Snapshot-based contract test
+│   └── contract.test.ts-snapshots/           # Saved response shapes (committed to repo)
 ├── schemas/
-│   └── cart.schema.ts              # Cart JSON Schema definitions
+│   └── cart.schema.ts                        # Cart JSON Schema definitions
 ├── helpers/
-│   └── schema-validator.ts         # Ajv wrapper (validateSchema, assertSchema)
+│   └── schema-validator.ts                   # Ajv wrapper (validateSchema, assertSchema)
 ├── fixtures/
-│   └── test-data.ts                # Endpoints, credentials, payloads
+│   └── test-data.ts                          # Endpoints, credentials, payloads
 ├── playwright.config.ts
 └── .github/workflows/playwright.yml
 
