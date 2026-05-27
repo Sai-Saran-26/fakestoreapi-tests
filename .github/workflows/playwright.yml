@@ -2,13 +2,18 @@ name: API Tests
 
 on:
   push:
-    branches: [main, master, develop]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
   workflow_dispatch:
   # Run nightly to detect upstream API changes
   schedule:
     - cron: '0 6 * * *'
+
+env:
+  # Opt into Node.js 24 ahead of the June 2026 deprecation deadline.
+  # https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
   test:
