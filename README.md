@@ -34,7 +34,6 @@ For schema validation I added **Ajv** (the industry-standard JSON Schema validat
 │   └── schema-validator.ts         # Ajv wrapper (validateSchema, assertSchema)
 ├── fixtures/
 │   └── test-data.ts                # Endpoints, credentials, payloads
-├── tests/                          # Local-run screenshots
 ├── playwright.config.ts
 └── .github/workflows/playwright.yml
 
@@ -72,8 +71,6 @@ npx playwright test --update-snapshots tests/contract.test.ts
 
 **Tests pass locally. CI runs return HTTP 403 for every API call.**
 
-Screenshots of a successful local run are in [`tests/`](tests/).
-
 ### Why CI fails
 
 `fakestoreapi.com` is hosted behind Cloudflare bot protection. Cloudflare automatically blocks requests originating from datacenter IP ranges, which includes all GitHub Actions runners (AWS / Azure / GCP). Every request from CI returns:
@@ -96,7 +93,7 @@ npm test
 npm run report
 ```
 
-All 30 tests pass against the live API from a non-datacenter IP. Local screenshots in [`tests/`](tests/).
+All 30 tests pass against the live API from a non-datacenter IP. Local
 
 ---
 
